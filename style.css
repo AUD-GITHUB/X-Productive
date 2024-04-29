@@ -1,0 +1,30 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#login-form, #register-form {
+    max-width: 300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+input[type="email"], input[type="password"], input[type="text"], input[type="date"], textarea, button {
+    margin: 10px 0;
+    padding: 10px;
+    width: 100%;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#note-content {
+    height: 100px;
+}
