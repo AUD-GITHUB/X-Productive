@@ -28,3 +28,11 @@ button:hover {
 #note-content {
     height: 100px;
 }
+
+.delete-button {
+    display: none;
+}
+
+.task-selected .delete-button {
+    display: inline-block;
+}
