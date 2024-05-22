@@ -1,9 +1,6 @@
-import { app } from './firebase-config.js';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js';
-import { getDatabase, ref, push, set, onValue } from 'https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js';
-
-const auth = getAuth(app);
-const db = getDatabase(app);
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signInAnonymously } from 'https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js';
+import { getDatabase, ref, push, set, onValue, remove } from 'https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js';
+import { auth, database } from './firebase-config.js';
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -13,32 +10,88 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-const taskForm = document.getElementById('task-form');
-taskForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const taskName = taskForm['task-name'].value;
-    const dueDate = taskForm['due-date'].value;
-    const user = auth.currentUser;
-    if (user) {
-        try {
-            const tasksRef = ref(db, 'tasks/' + user.uid);
-            const newTaskRef = push(tasksRef);
-            await set(newTaskRef, {
-                taskName: taskName,
-                dueDate: dueDate
-            });
-            taskForm.reset();
-        } catch (error) {
-            console.error('Error adding task: ', error);
+let calendar; // Declare calendar variable here
+
+document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+    initializeCalendar(calendarEl);
+
+    const addButton = document.getElementById('addEvent');
+    addButton.addEventListener('click', function () {
+        const title = prompt('Enter event title:');
+        const start = prompt('Enter event start date (YYYY-MM-DD HH:mm):');
+        const end = prompt('Enter event end date (YYYY-MM-DD HH:mm):');
+        addEventToDatabase(title, start, end);
+    });
+
+    // Sign in the user anonymously
+    signInAnonymously(auth).then(() => {
+        console.log("Anonymous sign-in successful.");
+    }).catch(function (error) {
+        console.error("Error signing in anonymously:", error.code, error.message);
+    });
+
+    // Ensure the user is signed in before interacting with the database
+    onAuthStateChanged(auth, function (user) {
+        if (user) {
+            console.log("User signed in:", user);
+            fetchEventsFromDatabase();
+        } else {
+            console.log("No user is signed in.");
         }
-    }
+    });
 });
+
+function initializeCalendar(calendarEl) {
+    calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        editable: true,
+        events: [], // Events will be loaded from the database
+        eventClick: function (info) {
+            if (confirm(`Do you want to delete the event "${info.event.title}"?`)) {
+                removeEventFromDatabase(info.event.id);
+                info.event.remove();
+            }
+        }
+    });
+    calendar.render();
+}
+
+function fetchEventsFromDatabase() {
+    const eventsRef = ref(database, 'events');
+    onValue(eventsRef, function (snapshot) {
+        calendar.removeAllEvents();
+        snapshot.forEach(function (childSnapshot) {
+            const eventData = childSnapshot.val();
+            calendar.addEvent({
+                id: childSnapshot.key,
+                title: eventData.title,
+                start: eventData.start,
+                end: eventData.end
+            });
+        });
+    });
+}
+
+function addEventToDatabase(title, start, end) {
+    const eventsRef = ref(database, 'events');
+    push(eventsRef, {
+        title: title,
+        start: start,
+        end: end
+    });
+}
+
+function removeEventFromDatabase(eventId) {
+    const eventRef = ref(database, 'events/' + eventId);
+    remove(eventRef);
+}
 
 function loadTasks(userId) {
     const taskList = document.getElementById('task-list');
     taskList.innerHTML = ''; // Clear previous tasks
 
-    const tasksRef = ref(db, 'tasks/' + userId);
+    const tasksRef = ref(database, 'tasks/' + userId);
     onValue(tasksRef, (snapshot) => {
         taskList.innerHTML = ''; // Clear task list before appending new tasks
         snapshot.forEach((childSnapshot) => {
@@ -76,8 +129,8 @@ function loadTasks(userId) {
                 });
             });
         });
-        
-        
+
+
     });
 }
 
@@ -99,36 +152,15 @@ function clearTasks() {
 }
 
 
-document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar-container');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: [
-            // Your events (tasks) will go here
-            {
-                title: 'Task 1',
-                start: '2024-04-01', // Start date
-                end: '2024-04-03'    // End date
-            },
-            {
-                title: 'Task 2',
-                start: '2024-04-05',
-                end: '2024-04-07'
-            },
-            // Add more tasks as needed
-        ]
-    });
-    calendar.render();
-});
 
 // Fetch tasks from Firebase Realtime Database
 function fetchTasksFromDatabase() {
     // Assuming you have a 'tasks' collection in your database
     const tasksRef = firebase.database().ref('tasks');
-    tasksRef.on('value', function(snapshot) {
+    tasksRef.on('value', function (snapshot) {
         // Convert snapshot to an array of tasks
         const tasks = [];
-        snapshot.forEach(function(childSnapshot) {
+        snapshot.forEach(function (childSnapshot) {
             const task = childSnapshot.val();
             tasks.push({
                 title: task.title,
@@ -152,14 +184,9 @@ function renderCalendar(tasks) {
 }
 
 // Call fetchTasksFromDatabase when the DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     fetchTasksFromDatabase();
 });
-
-
-
-
-
 
 const loginForm = document.getElementById('loginForm');
 loginForm.addEventListener('submit', (e) => {
@@ -213,4 +240,20 @@ logoutButton.addEventListener('click', (e) => {
         .catch(error => {
             console.error(error.message);
         });
+});
+
+
+// Ensure the user is signed in before interacting with the database
+auth.onAuthStateChanged(function (user) {
+    if (user) {
+        // User is signed in.
+        console.log("User signed in:", user);
+
+        // Initialize the calendar and fetch events
+        initializeCalendar();
+        fetchEventsFromDatabase();
+    } else {
+        // No user is signed in.
+        console.log("No user is signed in.");
+    }
 });

@@ -36,3 +36,7 @@ button:hover {
 .task-selected .delete-button {
     display: inline-block;
 }
+
+span{
+    display: inline;
+}

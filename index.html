@@ -8,13 +8,14 @@
 
     <link href="https://fonts.googleapis.com/css?family=Yeon+Sung&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <link href="fullcalender.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <title>X Productive</title>
     <link rel="icon" href="X_Productive_Logo.png">
@@ -22,98 +23,102 @@
 </head>
 
 <body>
-    <!-- Login Form -->
-    <div id="login-form">
-        <h2>Login</h2>
-        <form id="loginForm">
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-    </div>
-
-    <!-- Registration Form -->
-    <div id="register-form">
-        <h2>Register</h2>
-        <form id="registerForm">
-            <input type="email" id="register-email" placeholder="Email" required>
-            <input type="password" id="register-password" placeholder="Password" required>
-            <button type="submit">Register</button>
-        </form>
-    </div>
-
-    <!-- Dashboard -->
-    <div id="dashboard" style="display:none;">
-        <!-- Task Management Section -->
-        <div id="task-management">
-            <h2>Task Management</h2>
-            <ul id="task-list">
-                <!-- Tasks will be dynamically added here -->
-            </ul>
-            <form id="task-form">
-                <input type="text" id="task-name" placeholder="Task Name" required>
-                <input type="date" id="due-date" required>
-                <button type="submit">Add Task</button>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="login-form">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
             </form>
         </div>
-        <br><br><br><hr><br><br><br>
 
-        <!-- Calendar Section -->
-        <div id="calendar">
-            <h2>Calendar</h2>
-            <div id="calendar-container">
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js"></script>
+        <!-- Registration Form -->
+        <div id="register-form">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <input type="email" id="register-email" placeholder="Email" required>
+                <input type="password" id="register-password" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboard" style="display:none;">
+            <!-- Task Management Section -->
+            <div id="task-management">
+                <h2>Task Management</h2>
+                <ul id="task-list">
+                    <!-- Tasks will be dynamically added here -->
+                </ul>
+                <form id="task-form">
+                    <input type="text" id="task-name" placeholder="Task Name" required>
+                    <input type="date" id="due-date" required>
+                    <button type="submit">Add Task</button>
+                </form>
             </div>
-        </div>
-<br><br><br><hr><br><br><br>
-        <!-- Notes Section -->
-        <div id="notes">
-            <h2>Notes</h2>
-            <textarea id="note-content" placeholder="Write your note here"></textarea>
-            <button id="save-note">Save Note</button>
-            <ul id="note-list">
-                <!-- Notes will be dynamically added here -->
-            </ul>
-        </div>
+            <br><br><br>
+            <hr><br><br><br>
+            <div id="calendar-container">
+                <h2>Calendar</h2>
 
-        <!-- Project Management Section -->
-        <div id="project-management">
-            <h2>Project Management</h2>
-            <!-- Add project management features here -->
-        </div>
+                <div id="calendar"><br>
+                    <button id="addEvent">Add Event</button>
+                    <br>
+                </div>
+            </div>
+            <br><br><br>
+            <hr><br><br><br>
+            <!-- Notes Section -->
+            <div id="notes">
+                <h2>Notes</h2>
+                <textarea id="note-content" placeholder="Write your note here"></textarea>
+                <button id="save-note">Save Note</button>
+                <ul id="note-list">
+                    <!-- Notes will be dynamically added here -->
+                </ul>
+            </div>
 
-        <!-- Pomodoro Timer Section -->
-        <div id="pomodoro">
-            <h2>Pomodoro Timer</h2>
-            <!-- Add Pomodoro timer features here -->
-        </div>
+            <!-- Project Management Section -->
+            <div id="project-management">
+                <h2>Project Management</h2>
+                <!-- Add project management features here -->
+            </div>
 
-        <!-- Goal Setting and Tracking Section -->
-        <div id="goals">
-            <h2>Goal Setting and Tracking</h2>
-            <!-- Add goal setting and tracking features here -->
-        </div>
+            <!-- Pomodoro Timer Section -->
+            <div id="pomodoro">
+                <h2>Pomodoro Timer</h2>
+                <!-- Add Pomodoro timer features here -->
+            </div>
 
-        <!-- Time Tracking Section -->
-        <div id="time-tracking">
-            <h2>Time Tracking</h2>
-            <!-- Add time tracking features here -->
-        </div>
+            <!-- Goal Setting and Tracking Section -->
+            <div id="goals">
+                <h2>Goal Setting and Tracking</h2>
+                <!-- Add goal setting and tracking features here -->
+            </div>
 
-        <!-- Financial Management Section -->
-        <div id="financial-management">
-            <h2>Financial Management</h2>
-            <!-- Add financial management features here -->
-        </div>
+            <!-- Time Tracking Section -->
+            <div id="time-tracking">
+                <h2>Time Tracking</h2>
+                <!-- Add time tracking features here -->
+            </div>
 
-        <button id="logout">Logout</button>
+            <!-- Financial Management Section -->
+            <div id="financial-management">
+                <h2>Financial Management</h2>
+                <!-- Add financial management features here -->
+            </div>
+
+            <button id="logout">Logout</button>
+        </div>
     </div>
 
     <script type="module" src="https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js"></script>
     <script type="module" src="firebase-config.js"></script>
     <script type="module" src="app.js"></script>
+
 
 </body>
 
